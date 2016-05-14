@@ -1,10 +1,12 @@
 -- TODO: support https
 -- TODO: more info from api (see: https://github.com/pyload/pyload/blob/stable/module/Api.py)
 -- TODO: provide icon
--- TODO: flashing on captcha request and open webinterface on click
+-- TODO: flashing on captcha request
+-- TODO: handle offline pyload server (error: ..../json.lua:352: bad argument #1 to 'len' (string expected, got nil))
 local setmetatable = setmetatable
 local io = { popen = io.popen }
 
+local awful = require("awful")
 local wibox = require("wibox")
 
 local helpers = require("knorke.helpers")
@@ -14,7 +16,7 @@ local pyload = { mt = {} }
 local thiswidget = wibox.widget.textbox()
 
 -- all values in returned table are converted to string values
-local function get_state(plhost, plport, pluser, plpasswd)
+local function update_data(args)
 	local pyload_state = {
 		["pause"] = "N/A",	-- boolean
 --		["captcha"] = "N/A",	-- boolean available in /json/status
@@ -27,13 +29,14 @@ local function get_state(plhost, plport, pluser, plpasswd)
 	}
 
 	-- first argument host, second port - with fallback to localhost:8000
-	local host = plhost or "127.0.0.1"
-	local port = plport or "8000"
-	local username = pluser or ""
-	local password = plpasswd or ""
+	local host = args.host or "127.0.0.1"
+	local port = args.port or "8000"
+	local username = args.user or ""
+	local password = args.passwd or ""
 
-	local loginurl = "http://" .. host .. ":" .. port .. "/api/login"
-	local statusurl = "http://" .. host .. ":" .. port .. "/api/statusServer"
+	local baseurl = "http://" .. host .. ":" ..port
+	local loginurl = baseurl .. "/api/login"
+	local statusurl = baseurl .. "/api/statusServer"
 	-- the /json/status url needs activated webinterface
 	
 	-- the cookie from login will be passed to the secound curl command via pipe
@@ -43,13 +46,13 @@ local function get_state(plhost, plport, pluser, plpasswd)
 		pyload_state[k] = tostring(v)
 	end
 	json_string:close()
+	thiswidget:set_text(helpers.sub_format_string(args.format, pyload_state))
 
-	return pyload_state
-end
-
-local function update_data(args)
-	state = get_state(args.host, args.port, args.user, args.passwd)
-	thiswidget:set_text(helpers.sub_format_string(args.format, state))
+	-- open firefox with onclick
+	thiswidget:buttons(awful.util.table.join(
+		awful.button({ }, 1, function()
+			awful.util.spawn("firefox " .. baseurl)
+		end)))
 end
 
 local function setup_update(args)
