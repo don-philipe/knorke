@@ -14,6 +14,7 @@ local json = require("knorke.json")
 
 local pyload = { mt = {} }
 local thiswidget = wibox.widget.textbox()
+local browser = "firefox"
 
 -- all values in returned table are converted to string values
 local function update_data(args)
@@ -51,7 +52,7 @@ local function update_data(args)
 	-- open firefox with onclick
 	thiswidget:buttons(awful.util.table.join(
 		awful.button({ }, 1, function()
-			awful.util.spawn("firefox " .. baseurl)
+			awful.util.spawn(browser .. " " .. baseurl)
 		end)))
 end
 
