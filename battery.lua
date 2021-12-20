@@ -1,6 +1,7 @@
 local gears = require("gears")
 local vicious = require("vicious")
 local wibox = require("wibox")
+local naughty = require("naughty")
 
 local icon_full
 local icon_full_charg
@@ -12,6 +13,8 @@ local icon_low
 local icon_low_charg
 local icon_empty
 local icon_empty_charg
+local icon_low_notify
+local low_notification = false
 
 
 -- Create layout with widgets
@@ -31,7 +34,7 @@ local widget = wibox.widget {
 vicious.register(widget.text, vicious.widgets.bat, "$2%  $3h", 61, "BAT0")
 
 -- Widget function that is available from the outside.
-function widget.set_icons(full, full_charg, good, good_charg, medium, medium_charg, low, low_charg, empty, empty_charg)
+function widget.set_icons(full, full_charg, good, good_charg, medium, medium_charg, low, low_charg, empty, empty_charg, low_notify)
     icon_full = full
     icon_full_charg = full_charg
     icon_good = good
@@ -42,6 +45,7 @@ function widget.set_icons(full, full_charg, good, good_charg, medium, medium_cha
     icon_low_charg = low_charg
     icon_empty = empty
     icon_empty_charg = empty_charg
+    icon_low_notify = low_notify
 end
 
 gears.timer {
@@ -63,6 +67,16 @@ gears.timer {
                 widget.icon:set_image(icon_low)
             else 
                 widget.icon:set_image(icon_empty)
+                if low_notification ~= true then
+                    show = naughty.notify({ preset = naughty.config.presets.critical,
+                        title = "Battery low!",
+                        icon = icon_low_notify,
+                        destroy = function ()
+                            low_notification = false
+                        end,
+                        text = tostring(err) })
+                    low_notification = show ~= nil
+                end
             end
         else    -- charging
             if percent >= 90 then
