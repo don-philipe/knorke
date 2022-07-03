@@ -74,7 +74,7 @@ gears.timer {
                         destroy = function ()
                             low_notification = false
                         end,
-                        text = tostring(err) })
+                        text = tostring(percent) .. "%" })
                     low_notification = show ~= nil
                 end
             end
