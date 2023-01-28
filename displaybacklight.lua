@@ -21,18 +21,18 @@ local widget = wibox.widget {
 }
 
 local function change_brightness(amount)
-    if (amount < 0) then
-        awful.util.spawn("xbacklight -dec " .. math.abs(amount))
-    else
-        awful.util.spawn("xbacklight -inc " .. math.abs(amount))
-    end
     local f = io.popen("xbacklight -get")
     local bright = 0
     for line in f:lines() do
         bright = line
     end
-    -- add changed amount as the current value is not yet changed when calling io.popen
-    return tonumber(bright) + amount
+    final_brightness = tonumber(bright) + amount
+    if final_brightness < 1 then
+        final_brightness = 1
+    end
+
+    awful.util.spawn("xbacklight -set " .. final_brightness)
+    return final_brightness
 end
 
 -- Widget functions that are available from the outside.
