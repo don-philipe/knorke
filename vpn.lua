@@ -37,4 +37,26 @@ function widget.set_icons(vpn_noconn, vpn_conn)
     icon_vpn_conn = vpn_conn
 end
 
+awful.tooltip(
+    {
+        objects =  { widget },
+        mode = "outside",
+        align = "right",
+        fg = "white",
+        margin_leftright = 10,
+        margin_topbottom = 10,
+        preferred_positions = { "right", "left", "top", "bottom" },
+        timer_function = function()
+            local num_vpnc_proc = awful.spawn.with_shell("ps aux | grep vpnc | wc -l")
+            if (num_vpnc_proc > 1) then
+                return "VPNC"
+            end
+            local num_openconnect_proc = awful.spawn.with_shell("ps aux | grep openconnect | wc -l")
+            if (num_openconnect_proc > 1) then
+                return "OPENCONNECT"
+            end
+        end
+    }
+)
+
 return widget
