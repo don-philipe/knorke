@@ -143,7 +143,11 @@ awful.tooltip(
             if not err then
                 for i = 1, #json_obj do
                     if json_obj[i].info and json_obj[i].info.props["media.class"] == "Audio/Sink" then
-                        table.insert(results, tostring(json_obj[i].info.props["node.description"]))
+                        local active = ""
+                        if json_obj[i].info.state == "running" then
+                            active = " *"
+                        end
+                        table.insert(results, tostring(json_obj[i].info.props["node.description"]) .. active)
                     end
                 end
             end
