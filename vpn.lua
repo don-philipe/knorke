@@ -48,11 +48,11 @@ awful.tooltip(
         preferred_positions = { "right", "left", "top", "bottom" },
         timer_function = function()
             local num_vpnc_proc = awful.spawn.with_shell("ps aux | grep vpnc | wc -l")
-            if (num_vpnc_proc > 1) then
+            if (tonumber(num_vpnc_proc) > 1) then
                 return "VPNC"
             end
             local num_openconnect_proc = awful.spawn.with_shell("ps aux | grep openconnect | wc -l")
-            if (num_openconnect_proc > 1) then
+            if (tonumber(num_openconnect_proc) > 1) then
                 return "OPENCONNECT"
             end
         end
