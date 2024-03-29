@@ -20,7 +20,7 @@ gears.timer {
     timeout = 10,
     autostart = true,
     callback = function ()
-        awful.spawn.easy_async_with_shell("ifconfig | grep \"tun.*:\"",
+        awful.spawn.easy_async_with_shell("ifconfig | grep \"tun.*:\\|wg.*:\"",
             function (stdout, _, _, _)
                 if (stdout == "") then
                     widget.icon:set_image(icon_vpn_noconn)
