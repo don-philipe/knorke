@@ -10,6 +10,7 @@ local gears = require("gears")
 local is_on
 local icon_dis
 local icon_enab
+local icon_conn
 
 local widget = wibox.widget {
    {
@@ -33,9 +34,10 @@ widget:buttons(awful.util.table.join(
 
 -- Add icons vor various BT states.
 -- These icons should come as beautiful.icons
-function widget.set_icons(disabled, enabled)
+function widget.set_icons(disabled, enabled, connected)
     icon_dis = disabled
     icon_enab = enabled
+    icon_conn = connected
 end
 
 awful.tooltip(
@@ -59,6 +61,7 @@ watch("bluetoothctl show", 5,
     function(_, stdout)
         -- Check if there  bluetooth
         local checker = stdout:match("Powered: yes") -- If 'Powered: yes' string is detected on stdout
+        -- TODO check for connection and set connected icon
         local widget_icon_nme
         if (checker ~= nil) then
             is_on = true
