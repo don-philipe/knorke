@@ -50,7 +50,7 @@ vicious.register(widget.text, vicious.widgets.wifi,
             end
             info = args
         else
-            widget.icon:set_image(icon_wifi)
+            widget.icon:set_image(icon_none)
         end
         return " " .. args["{ssid}"]
     end, 2, "wlp64s0")
@@ -65,18 +65,22 @@ function container.set_icons(wifi, excellent, good, ok, none)
 end
 
 awful.tooltip(
-   {
-      objects = { widget },
-      mode = "outside",
-      align = "right",
-      fg = "white",
-      margin_leftright = 10,
-      margin_topbottom = 10,
-      timer_function = function()
-          return info["{ssid}"] .. "\n  Channel: " .. info["{chan}"] .. "\n  Rate: " .. info["{rate}"] .. "Mb/s\n  Frequency: " .. info["{freq}"] .. "MHz"
-      end,
-      preferred_positions = {"right", "left", "top", "bottom"}
-   }
+    {
+        objects = { widget },
+        mode = "outside",
+        align = "right",
+        fg = "white",
+        margin_leftright = 10,
+        margin_topbottom = 10,
+        timer_function = function()
+            if info["{ssid}"] ~= nil then
+                return info["{ssid}"] .. "\n  Channel: " .. info["{chan}"] .. "\n  Rate: " .. info["{rate}"] .. "Mb/s\n  Frequency: " .. info["{freq}"] .. "MHz"
+            else
+                return "N/A"
+            end
+        end,
+        preferred_positions = {"right", "left", "top", "bottom"}
+    }
 )
 
 return container
