@@ -1,3 +1,4 @@
+local awful = require("awful")
 local beautiful = require("beautiful")
 local gears = require("gears")
 local vicious = require("vicious")
@@ -10,6 +11,7 @@ local icon_ok
 local icon_none
 local color = beautiful.bg_focus
 
+local info = {}
 
 -- Create layout with widgets
 local widget = wibox.widget {
@@ -46,6 +48,7 @@ vicious.register(widget.text, vicious.widgets.wifi,
             else
                 widget.icon:set_image(icon_none)
             end
+            info = args
         else
             widget.icon:set_image(icon_wifi)
         end
@@ -60,6 +63,21 @@ function container.set_icons(wifi, excellent, good, ok, none)
     icon_ok = ok
     icon_none = none
 end
+
+awful.tooltip(
+   {
+      objects = { widget },
+      mode = "outside",
+      align = "right",
+      fg = "white",
+      margin_leftright = 10,
+      margin_topbottom = 10,
+      timer_function = function()
+          return info["{ssid}"] .. "\n  Channel: " .. info["{chan}"] .. "\n  Rate: " .. info["{rate}"] .. "Mb/s\n  Frequency: " .. info["{freq}"] .. "MHz"
+      end,
+      preferred_positions = {"right", "left", "top", "bottom"}
+   }
+)
 
 return container
 
